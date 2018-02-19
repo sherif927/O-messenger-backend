@@ -33,7 +33,9 @@ var UserSchema = new mongoose.Schema({
         required: true
     }, displayPicture: {
         type: String
-    }, friends: [{
+    }, statusUpdate:{
+        type: String
+    },friends: [{
         userId: {
             type: mongoose.Schema.Types.ObjectId,
             required: true

@@ -21,7 +21,7 @@ router.post('/',async (req,res)=>{
 });
 
 router.post('/msg',async (req,res)=>{
-    var body=_.pick(req.body,['sentFrom','conversationId','payload','status','type']);
+    var body=_.pick(req.body,['senderId','senderName','conversationId','payload','status','type']);
     var msg=new Message(body);
     console.log(msg);
     try{

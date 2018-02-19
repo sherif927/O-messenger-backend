@@ -9,7 +9,7 @@ router.get('/',async (req,res)=>{
 });
 
 router.post('/',async (req,res)=>{
-    var body=_.pick(req.body,['email','username','password','auth_token','fcm_token','displayPicture']);
+    var body=_.pick(req.body,['email','username','password','auth_token','fcm_token','displayPicture','statusUpdate']);
     var user =new User(body);
     try{
         var userr=await user.save();

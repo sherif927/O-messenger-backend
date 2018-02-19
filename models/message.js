@@ -1,8 +1,11 @@
 const mongoose = require('mongoose');
 
 var MessageSchema = new mongoose.Schema({
-    sentFrom: {
+    senderId: {
         type: mongoose.Schema.Types.ObjectId,
+        required: true
+    }, senderName: {
+        type: String,
         required: true
     }, type: {
         type: Number,
