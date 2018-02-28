@@ -9,7 +9,7 @@ admin.initializeApp({
   databaseURL: "https://o-messenger-backend.firebaseio.com"
 });
 
-emitter.on('push-notification', async function (messageData) {
+firebaseEmitter.on('push-notification', async function (messageData) {
     //Setting the notification body and title
     var payload = {
         notification: {
@@ -20,7 +20,7 @@ emitter.on('push-notification', async function (messageData) {
 
     // This registration token comes from the client FCM SDKs.
     var registrationTokens = messageData.registrationTokens;
-
+    
     // Set the message as high priority and have it expire after 24 hours.
     var options = {
         priority: "high",
@@ -31,7 +31,6 @@ emitter.on('push-notification', async function (messageData) {
     // registration tokens with the provided options.
     try {
         var response = await admin.messaging().sendToDevice(registrationTokens, payload, options);
-        console.log(response);
     } catch (e) {
         console.log(e);
     }
