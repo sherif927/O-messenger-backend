@@ -9,9 +9,9 @@ router.get('/',async (req,res)=>{
     res.status(200).send({message:'welcome to users'});
 });
 
-router.post('/sign-up',async (req,res)=>{
+router.post('/signup',async (req,res)=>{
     try {
-        var body=_.pick(req.body,['email','username','password','auth_token','fcm_token','displayPicture','statusUpdate']);
+        var body=_.pick(req.body,['email','username','password','fcm_token','displayPicture']);
         var user = new User(body);
         await user.save();
         var token = await user.generateAuthToken();
@@ -41,5 +41,34 @@ router.put('/logout',authenticate,async(req,res)=>{
         res.status(400).send(e);
     }
 });
+
+router.get('/friends',authenticate,async (req,res)=>{
+    try{
+        res.status(200).send(req.user.friends);
+    }catch(e){
+        res.status(400).send(e);
+    }
+});
+
+router.get('/requests',authenticate,async (req,res)=>{
+    try{
+        res.status(200).send(req.user.requests);
+    }catch(e){
+        res.status(400).send(e);
+    }
+});
+
+
+router.delete('/rejectFriend',authenticate,async (req,res)=>{
+   try{
+    var user=req.user;
+    var body=_.pick(req.body,['userId']);
+    var result=await User.rejectRequest(user._id,body.userId);
+    res.status(200).send(result);
+   }catch(e){
+    res.status(400).send(e);
+   }
+});
+
 
 module.exports=router;

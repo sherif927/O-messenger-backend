@@ -3,11 +3,11 @@ const express = require('express');
 const bodyParse = require('body-parser');
 
 //Import Routers
-var users=require('../routers/users');
-var conversations=require('../routers/conversations');
+var users = require('../routers/users');
+var conversations = require('../routers/conversations');
 
 //DB and ORM Config
-const mongoose=require('../db/mongoose');
+const mongoose = require('../db/mongoose');
 
 //Initializing Express
 var app = express();
@@ -16,16 +16,16 @@ const port = process.env.PORT || 3000;
 
 //Middleware and Routers
 app.use(bodyParse.json());
-app.use('/users',users);
-app.use('/conversations',conversations);
+app.use('/users', users);
+app.use('/conversations', conversations);
 
 //TEST method
 app.get('/', (req, res) => {
-    res.status(200).send({ message: 'welcome' });
+  res.status(200).send({ message: 'welcome' });
 })
 
 app.listen(port, () => {
-    console.log(`Started on port ${port}`);
+  console.log(`Started on port ${port}`);
 });
 
 module.exports = { app }
