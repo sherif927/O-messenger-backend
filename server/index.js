@@ -5,6 +5,7 @@ const bodyParse = require('body-parser');
 //Import Routers
 var users = require('../routers/users');
 var conversations = require('../routers/conversations');
+var friends=require('../routers/friends');
 
 //DB and ORM Config
 const mongoose = require('../db/mongoose');
@@ -18,6 +19,7 @@ const port = process.env.PORT || 3000;
 app.use(bodyParse.json());
 app.use('/users', users);
 app.use('/conversations', conversations);
+app.use('/friends',friends);
 
 //TEST method
 app.get('/', (req, res) => {

@@ -110,9 +110,15 @@ UserSchema.statics.findByCredentials = function (email, password) {
 
 UserSchema.statics.addFriend = async function (user, userId) {
   var User = this;
-  var result = await User.findOne({ _id: new ObjectID(userId) });
-  result.friends.push(user);
-  return result.save();
+  return User.findOneAndUpdate({
+    _id: new ObjectID(userId)
+  }, {
+      $push: {
+        requests: user
+      }
+    }, {
+      returnOriginal: false
+    });
 }
 
 UserSchema.statics.rejectRequest = function (userId, rejectedId) {
@@ -120,15 +126,59 @@ UserSchema.statics.rejectRequest = function (userId, rejectedId) {
   return User.findOneAndUpdate({
     _id: new ObjectID(userId)
   }, {
-    $pull: {
-      requests: {
-        userId: rejectedId
+      $pull: {
+        requests: {
+          userId: rejectedId
+        }
       }
-    }
     }, {
       returnOriginal: false
     });
 }
+
+UserSchema.statics.approveRequest = async function (user, approvedId) {
+  var User = this;
+  var approvedUser = await User.findOne({ _id: new ObjectID(approvedId) });
+
+  var minifiedUser = {
+    userId: user._id,
+    username: user.username,
+    email: user.email,
+    displayPicutre: user.displayPicture
+  };
+
+  var minifiedUser2 = {
+    userId: approvedUser._id,
+    username: approvedUser.username,
+    email: approvedUser.email,
+    displayPicture: approvedUser.displayPicture
+  };
+
+  try {
+    var res1 = await User.findOneAndUpdate({
+      _id: new ObjectID(user._id)
+    }, {
+        $pull: {
+          requests: {
+            userId: approvedId
+          }
+        }
+      }, {
+        returnOriginal: false
+      });
+  } catch (e) {
+    return Promise.reject();
+  }
+  user.friends.push(minifiedUser2);
+  approvedUser.friends.push(minifiedUser);
+  var res1 = await user.save();
+  var res2 = await approvedUser.save();
+  return new Promise((resolve, reject) => {
+    (res1 && res2) ? resolve(true) : reject();
+  });
+}
+
+
 
 /////////////////////////////////////////////////
 ////////////// INSTANCE METHODS /////////////////
@@ -155,6 +205,13 @@ UserSchema.methods.toJSON = function () {
 UserSchema.methods.removeToken = function (token) {
   var user = this;
   user.auth_token = "";
+  return user.save();
+}
+
+UserSchema.methods.updateProfile = function (profileUpdate) {
+  var user = this;
+  user.statusUpdate = profileUpdate.statusUpdate;
+  user.displayPicture = profileUpdate.displayPicture;
   return user.save();
 }
 
