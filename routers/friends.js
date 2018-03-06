@@ -5,7 +5,7 @@ const _ = require('lodash');
 const { authenticate } = require('../middleware/authentication/authenticate');
 var router = express.Router();
 
-router.get('/friends', authenticate, async (req, res) => {
+router.get('/', authenticate, async (req, res) => {
   try {
     res.status(200).send(req.user.friends);
   } catch (e) {
