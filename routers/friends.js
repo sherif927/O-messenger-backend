@@ -39,6 +39,7 @@ router.delete('/rejectFriend', authenticate, async (req, res) => {
 router.put('/approveFriend', authenticate, async (req, res) => {
   try {
     var body = _.pick(req.body, ['userId']);
+    console.log(body);
     if (!ObjectID.isValid(body.userId)) return res.status(400).send({message: 'Invalid Id'});
     var result = await User.approveRequest(req.user, body.userId);
     res.status(200).send(result);
@@ -47,17 +48,38 @@ router.put('/approveFriend', authenticate, async (req, res) => {
   }
 });
 
-router.put('/addFriend', authenticate, async (req, res) => {
+router.post('/search',authenticate,async(req,res)=>{
   try {
-    var user = {
-      userId: req.user._id,
-      username: req.user.username,
-      email: req.user.email,
-      displayPicture: req.user.displayPicture
-    };
+    var body = _.pick(req.body, ['username']);
+    var result = await User.searchByUsername(req.user._id,body.username);
+    (result == null) ?
+      res.status(404).send({ message: 'Object was not found' }) :
+      res.status(200).send(result);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+
+router.delete('/removeFriend',authenticate,async (req,res)=>{
+  try {
+    var user = req.user;
     var body = _.pick(req.body, ['userId']);
     if (!ObjectID.isValid(body.userId)) return res.status(400).send({message: 'Invalid Id'});
-    var result = await User.addFriend(user, body.userId);
+    var result = await User.removeFriend(user._id, body.userId);
+    (result == null) ?
+      res.status(404).send({ message: 'Object was not found' }) :
+      res.status(200).send(result);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+router.put('/addFriend', authenticate, async (req, res) => {
+  try {
+    var body = _.pick(req.body, ['userId']);
+    if (!ObjectID.isValid(body.userId)) return res.status(400).send({message: 'Invalid Id'});
+    var result = await User.addFriend(req.user, body.userId);
     (result == null) ?
       res.status(404).send({ message: 'Object was not found' }) :
       res.status(200).send(result);
