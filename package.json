@@ -18,5 +18,13 @@
     "mongodb": "^3.0.2",
     "mongoose": "^5.0.6",
     "validator": "^9.4.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sherif927/O-messenger-backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sherif927/O-messenger-backend/issues"
+  },
+  "homepage": "https://github.com/sherif927/O-messenger-backend#readme"
 }
