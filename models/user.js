@@ -108,17 +108,63 @@ UserSchema.statics.findByCredentials = function (email, password) {
   });
 }
 
+UserSchema.statics.searchByUsername = async function (userId, username) {
+  var User = this;
+  return User.find({ _id: { $ne: new ObjectID(userId) }, username: { $regex: '.*' + username + '.*' } });
+}
+
 UserSchema.statics.addFriend = async function (user, userId) {
   var User = this;
-  return User.findOneAndUpdate({
-    _id: new ObjectID(userId)
-  }, {
-      $push: {
-        requests: user
-      }
-    }, {
-      returnOriginal: false
-    });
+  var userToAdd = await User.findOne({ _id: new ObjectID(userId) });
+  var foundInRequests = false, foundInFriends = false;
+
+  for (i = 0; i < userToAdd.friends.length; i++) {
+    if (userToAdd.friends[i].email == user.email) {
+      foundInFriends = true;
+      break;
+    }
+  }
+
+  for (i = 0; i < userToAdd.requests.length; i++) {
+    if (userToAdd.requests[i].email == user.email) {
+      foundInRequests = true;
+      break;
+    }
+  }
+
+  for (i = 0; i < user.friends.length; i++) {
+    if (user.friends[i].email == userToAdd.email) {
+      foundInFriends = true;
+      break;
+    }
+  }
+
+  for (i = 0; i < user.requests.length; i++) {
+    if (user.requests[i].email == userToAdd.email) {
+      foundInRequests = true;
+      break;
+    }
+  }
+
+  if (!foundInFriends && !foundInRequests) {
+    var userSummary = {
+      userId: new ObjectID(user._id),
+      username: user.username,
+      email: user.email,
+      displayPicture: user.displayPicture
+    }
+
+    userToAdd.requests.push(userSummary);
+    return userToAdd.save();
+  }
+  var message;
+  if (foundInFriends && !foundInRequests)
+    message = { message: 'You are already friends with this user' };
+  else if (!foundInFriends && foundInRequests)
+    message = { message: 'You have already sent a friend request to this user' };
+  else
+    message = { message: 'You cannot add this user' };
+  return Promise.reject(message);
 }
 
 UserSchema.statics.rejectRequest = function (userId, rejectedId) {
@@ -132,8 +178,35 @@ UserSchema.statics.rejectRequest = function (userId, rejectedId) {
         }
       }
     }, {
-      returnOriginal: false
+      returnOriginal: true
     });
+}
+
+UserSchema.statics.removeFriend = async function (userId, removedId) {
+  var User = this;
+   var removal=await User.findOneAndUpdate({
+    _id: new ObjectID(removedId)
+  }, {
+      $pull: {
+        friends: {
+          userId: userId
+        }
+      }
+    }, {
+      returnOriginal: true
+    });
+
+    return User.findOneAndUpdate({
+      _id: new ObjectID(userId)
+    }, {
+        $pull: {
+          friends: {
+            userId: removedId
+          }
+        }
+      }, {
+        returnOriginal: true
+      });
 }
 
 UserSchema.statics.approveRequest = async function (user, approvedId) {
@@ -160,11 +233,11 @@ UserSchema.statics.approveRequest = async function (user, approvedId) {
     }, {
         $pull: {
           requests: {
-            userId: approvedId
+            userId: new ObjectID(approvedId)
           }
         }
       }, {
-        returnOriginal: false
+        returnOriginal: true
       });
   } catch (e) {
     return Promise.reject();
@@ -174,7 +247,7 @@ UserSchema.statics.approveRequest = async function (user, approvedId) {
   var res1 = await user.save();
   var res2 = await approvedUser.save();
   return new Promise((resolve, reject) => {
-    (res1 && res2) ? resolve(true) : reject();
+    (res1 && res2) ? resolve({message:'Friend added'}) : reject();
   });
 }
 
@@ -195,13 +268,6 @@ UserSchema.methods.generateAuthToken = function () {
   });
 }
 
-UserSchema.methods.toJSON = function () {
-  var user = this;
-  var obj = user.toObject();
-  return _.pick(obj, ['_id', 'email']);
-
-}
-
 UserSchema.methods.removeToken = function (token) {
   var user = this;
   user.auth_token = "";
@@ -213,6 +279,12 @@ UserSchema.methods.updateProfile = function (profileUpdate) {
   user.statusUpdate = profileUpdate.statusUpdate;
   user.displayPicture = profileUpdate.displayPicture;
   return user.save();
+}
+
+UserSchema.methods.toJSON = function () {
+  var user = this;
+  var obj = user.toObject();
+  return _.pick(obj, ['_id', 'email', 'username', 'displayPicture', 'friends', 'requests', 'fcm_token']);
 }
 
 /////////////////////////////////////////////////

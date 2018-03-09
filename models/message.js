@@ -19,6 +19,9 @@ var MessageSchema = new mongoose.Schema({
     }, conversationId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true
+    },sentAt:{
+        type:Date,
+        required:true
     }
 });
 

@@ -52,4 +52,21 @@ router.put('/updateProfile', authenticate, async (req, res) => {
   }
 });
 
+router.get('/me', authenticate, async (req, res) => {
+  res.status(200).send(req.user);
+});
+
+router.get('/profile/:id', authenticate, async (req, res) => {
+  var id = req.params.id;
+  if (!ObjectID.isValid(id)) return res.status(400).send({ message: 'Bad request,Invalid Id' });
+  try{
+    var result=await User.findOne({_id:new ObjectID(id)});
+  (result == null) ?
+      res.status(404).send({ message: 'Object was not found' }) :
+      res.status(200).send(result);
+  }catch(e){
+      res.status(400).send(e);
+  }
+});
+
 module.exports = router;
