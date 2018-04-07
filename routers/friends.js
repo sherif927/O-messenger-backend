@@ -2,15 +2,11 @@ const express = require('express');
 const User = require('../models/user');
 const { ObjectID } = require('mongodb');
 const _ = require('lodash');
-const { authenticate } = require('../middleware/authentication/authenticate');
+const authenticate = require('../middleware/authentication/authenticate');
 var router = express.Router();
 
 router.get('/', authenticate, async (req, res) => {
-  try {
     res.status(200).send(req.user.friends);
-  } catch (e) {
-    res.status(400).send(e);
-  }
 });
 
 router.get('/requests', authenticate, async (req, res) => {
@@ -20,7 +16,6 @@ router.get('/requests', authenticate, async (req, res) => {
     res.status(400).send(e);
   }
 });
-
 
 router.delete('/rejectFriend', authenticate, async (req, res) => {
   try {
@@ -59,7 +54,6 @@ router.post('/search',authenticate,async(req,res)=>{
     res.status(400).send(e);
   }
 });
-
 
 router.delete('/removeFriend',authenticate,async (req,res)=>{
   try {

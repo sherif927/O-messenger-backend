@@ -4,10 +4,11 @@
   "description": "backend express application for o-messenger",
   "main": "index.js",
   "scripts": {
-    "start":"node server/index.js",
+    "start": "node server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
-  },"engines": {
-    "node":"8.7.0"
+  },
+  "engines": {
+    "node": "8.7.0"
   },
   "author": "Sherif Amr",
   "license": "ISC",
@@ -16,6 +17,7 @@
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "firebase-admin": "^5.9.0",
+    "hashmap": "^2.3.0",
     "jsonwebtoken": "^8.1.1",
     "lodash": "^4.17.5",
     "mongodb": "^3.0.2",
