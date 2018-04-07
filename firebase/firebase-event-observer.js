@@ -32,7 +32,6 @@ firebaseEmitter.on('push-notification', async function (messageData) {
     // registration tokens with the provided options.
     try {
         var response = await admin.messaging().sendToDevice(registrationTokens, payload, options);
-        console.log(JSON.stringify(response,undefined,2));
     } catch (e) {
         console.log(e);
     }
