@@ -19,10 +19,10 @@ firebaseEmitter.on('push-notification', async function (messageData) {
     };
 
     // This registration token comes from the client FCM SDKs.
-    var registrationTokens = messageData.registrationTokens[0];
+    var registrationTokens = messageData.registrationTokens;
 
 
-    // Set the message as high priority and have it expire after 24 hours.
+    // Set the message as high priority and have it expire after 48 hours.
     var options = {
         priority: "high",
         timeToLive: 2 * 60 * 60 * 24
