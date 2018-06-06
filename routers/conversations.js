@@ -6,11 +6,13 @@ const _ = require('lodash');
 const authenticate = require('../middleware/authentication/authenticate');
 var router = express.Router();
 
-router.post('/newConversation',authenticate,async(req,res)=>{
+router.post('/newConversation',async(req,res)=>{
   try {
     var body = _.pick(req.body, ['users']);
-    var conversation=new Conversation({ users:body });
+    console.log(body.users);
+    var conversation=new Conversation({ users:body.users });
     await conversation.save();
+    res.status(200).send(conversation);
   } catch (e) {
     res.status(400).send(e);
   }
