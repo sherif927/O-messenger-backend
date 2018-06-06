@@ -1,12 +1,12 @@
 var admin = require("firebase-admin");
 var events = require('events');
 var firebaseEmitter = new events.EventEmitter();
-var serviceAccount = require("./o-messenger-backend-firebase-adminsdk-llbsk-bef6522eef.json");
+var serviceAccount = require('./o-messenger-backend-firebase-adminsdk-llbsk-bef6522eef.json');
 
 //Initialize admin-sdk with credentials
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://o-messenger-backend.firebaseio.com"
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://o-messenger-backend.firebaseio.com"
 });
 
 firebaseEmitter.on('push-notification', async function (messageData) {
@@ -20,11 +20,12 @@ firebaseEmitter.on('push-notification', async function (messageData) {
 
     // This registration token comes from the client FCM SDKs.
     var registrationTokens = messageData.registrationTokens;
-    
-    // Set the message as high priority and have it expire after 24 hours.
+
+
+    // Set the message as high priority and have it expire after 48 hours.
     var options = {
         priority: "high",
-        timeToLive: 60 * 60 * 24
+        timeToLive: 2 * 60 * 60 * 24
     };
 
     // Send a message to the devices corresponding to the provided

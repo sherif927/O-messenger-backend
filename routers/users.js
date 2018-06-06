@@ -2,12 +2,8 @@ const express = require('express');
 const User = require('../models/user');
 const { ObjectID } = require('mongodb');
 const _ = require('lodash');
-const { authenticate } = require('../middleware/authentication/authenticate');
+const authenticate = require('../middleware/authentication/authenticate');
 var router = express.Router();
-
-router.get('/', async (req, res) => {
-  res.status(200).send({ message: 'welcome to users' });
-});
 
 router.post('/signup', async (req, res) => {
   try {
@@ -20,7 +16,6 @@ router.post('/signup', async (req, res) => {
     res.status(400).send(e);
   }
 });
-
 
 router.post('/login', async (req, res) => {
   try {
