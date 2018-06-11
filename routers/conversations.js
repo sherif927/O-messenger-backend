@@ -16,6 +16,7 @@ router.post('/newConversation', async (req, res) => {
     res.status(200).send(conversation);
   } catch (e) {
     res.status(400).send(e);
+    console.log(e);
   }
 });
 
