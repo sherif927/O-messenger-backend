@@ -3,8 +3,6 @@ require('./config/config');
 
 //Primary Imports
 const express = require('express');
-const http = require('http');
-const socketIO = require('socket.io');
 const bodyParse = require('body-parser');
 
 //Import Routers
@@ -27,16 +25,12 @@ app.use('/users', users);
 app.use('/conversations', conversations);
 app.use('/friends',friends);
 
-//Initializing SocketIO
-var server = http.createServer(app);
-var io = socketIO(server);
-
 //TEST method
 app.get('/', (req, res) => {
   res.status(200).send({ message: 'welcome' });
 });
 
-server.listen(port, () => {
+app.listen(port, () => {
   console.log(`Started on port ${port}`);
 });
 

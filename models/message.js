@@ -10,9 +10,6 @@ var MessageSchema = new mongoose.Schema({
     }, type: {
         type: Number,
         required: true,
-    }, status: {
-        type: Number,
-        required: true
     }, payload: {
         type: String,
         required: true
